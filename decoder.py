@@ -151,11 +151,12 @@ def idct_2d(image):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input", help="path to the input image")
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("input", help="path to the input image")
+    # args = parser.parse_args()
 
-    dc, ac, tables, blocks_count = read_image_file(args.input)
+    # dc, ac, tables, blocks_count = read_image_file(args.input)
+    dc, ac, tables, blocks_count = read_image_file('t.txt')
 
     # assuming that the block is a 8x8 square
     block_side = 8
@@ -180,8 +181,9 @@ def main():
 
     image = Image.fromarray(npmat, 'YCbCr')
     image = image.convert('RGB')
-    image.show()
-
+    #image.show()
+    image.save('t3.jpg')
+    return image
 
 if __name__ == "__main__":
     main()

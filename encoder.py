@@ -102,14 +102,17 @@ def write_to_file(filepath, dc, ac, blocks_count, tables):
     f.close()
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input", help="path to the input image")
-    parser.add_argument("output", help="path to the output image")
-    args = parser.parse_args()
+def main(input):
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("input", help="path to the input image")
+    # parser.add_argument("output", help="path to the output image")
+    # args = parser.parse_args()
 
-    input_file = args.input
-    output_file = args.output
+    # input_file = args.input
+    # output_file = args.output
+
+    input_file = input
+    output_file = 't.txt'
 
     image = Image.open(input_file)
     ycbcr = image.convert('YCbCr')
