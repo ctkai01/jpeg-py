@@ -2,11 +2,10 @@ from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
 import subprocess
-
 import encoder
 import decoder
 import os
-
+from tkinter import messagebox
 #root.attributes('-fullscreen',True)
 
 get_name = ''
@@ -34,23 +33,26 @@ def open_file():
        
 
 def compresstion_jpege():
-  
-    # path = os.path.realpath("E:/python/jpeg-python/t3.jpg")
-    # os.startfile(path)
 
-    encoder.main(get_name)
-    image = decoder.main()
-    width, height = image.size
-    resized_image= image.resize((200,200), Image.Resampling.LANCZOS)
+    if encoder.main(get_name) == 0 :
+       messagebox.showinfo("Thông báo", "Chỉ đang hỗ trợ ảnh RGB")
+    elif encoder.main(get_name) == 2 :
+       messagebox.showinfo("Thông báo", "Chiều cao và chiều rộng của ảnh nên chia hết cho 8")
+    else:
+        image = decoder.main()
+        width, height = image.size
+        resized_image= image.resize((200,200), Image.Resampling.LANCZOS)
 
-    img = ImageTk.PhotoImage(resized_image)
-  
-    size_file = round(os.stat("E:/python/jpeg-python/t3.jpg").st_size / 1048576, 2)
+        img = ImageTk.PhotoImage(resized_image)
+        path = os.path.dirname(os.path.realpath("result.jpg")) 
+        path += "\\result.jpg"
     
-    info_img_after.config(text="Kích thước: {} X {} ~ {} MB".format(width, height, size_file))
+        size_file = round(os.stat(path).st_size / 1048576, 2)
+        
+        info_img_after.config(text="Kích thước: {} X {} ~ {} MB".format(width, height, size_file))
 
-    img_after.configure(image=img, width=200, height=200)
-    img_after.image=img
+        img_after.configure(image=img, width=200, height=200)
+        img_after.image=img
     
 win = Tk()
 win.geometry("600x650")
@@ -81,7 +83,6 @@ img_after.grid(column=1, row=3, columnspan=1, sticky='EW')
 
 info_img_after = Label(win, text='')
 info_img_after.grid(column=1, row=4, columnspan=1, sticky='EW')
-
 
 # Compression button
 btn_compression = Button(win, text="Nén", background='green', font=('Georgia 13', 10, 'bold'), fg='white', command=compresstion_jpege)

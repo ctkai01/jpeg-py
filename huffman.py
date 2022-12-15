@@ -43,6 +43,7 @@ class HuffmanTree:
             return not (self < other)
 
     def __init__(self, arr):
+        # Hàng đợi ưu tiên
         q = PriorityQueue()
 
         # calculate frequencies and insert them into a priority queue

@@ -62,6 +62,7 @@ class JPEGFileReader:
         # TODO: break the loop if __read_char is not returing new char
         while prefix not in table:
             prefix += self.__read_char()
+       
         return table[prefix]
 
     def __read_uint(self, size):
@@ -127,18 +128,27 @@ def read_image_file(filepath):
 
 
 def zigzag_to_block(zigzag):
-    # assuming that the width and the height of the block are equal
     rows = cols = int(math.sqrt(len(zigzag)))
 
     if rows * cols != len(zigzag):
         raise ValueError("length of zigzag should be a perfect square")
+    zz = [0,   1,  8, 16,  9,  2,  3, 10,
+          17, 24, 32, 25, 18, 11,  4,  5,
+          12, 19, 26, 33, 40, 48, 41, 34,
+          27, 20, 13,  6,  7, 14, 21, 28,
+          35, 42, 49, 56, 57, 50, 43, 36,
+          29, 22, 15, 23, 30, 37, 44, 51,
+          58, 59, 52, 45, 38, 31, 39, 46,
+          53, 60, 61, 54, 47, 55, 62, 63]
+    result = np.zeros((8,8))
 
-    block = np.empty((rows, cols), np.int32)
-
-    for i, point in enumerate(zigzag_points(rows, cols)):
-        block[point] = zigzag[i]
-
-    return block
+    index_zz = 0
+    for i in range(8):
+        for j in range(8):
+            index =  zz.index(index_zz)
+            result[i][j] = zigzag[index]
+            index_zz += 1
+    return result
 
 
 def dequantize(block, component):
@@ -151,11 +161,7 @@ def idct_2d(image):
 
 
 def main():
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("input", help="path to the input image")
-    # args = parser.parse_args()
-
-    # dc, ac, tables, blocks_count = read_image_file(args.input)
+    
     dc, ac, tables, blocks_count = read_image_file('t.txt')
 
     # assuming that the block is a 8x8 square
@@ -175,14 +181,15 @@ def main():
         for c in range(3):
             zigzag = [dc[block_index, c]] + list(ac[block_index, :, c])
             quant_matrix = zigzag_to_block(zigzag)
+          
             dct_matrix = dequantize(quant_matrix, 'lum' if c == 0 else 'chrom')
             block = idct_2d(dct_matrix)
             npmat[i:i+8, j:j+8, c] = block + 128
 
     image = Image.fromarray(npmat, 'YCbCr')
     image = image.convert('RGB')
-    #image.show()
-    image.save('t3.jpg')
+    
+    image.save('result.jpg')
     return image
 
 if __name__ == "__main__":
